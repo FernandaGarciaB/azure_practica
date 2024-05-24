@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Predicción</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Complete los detalles para la predicción</h1>
+        <form action="/" method="post">
+            <label for="Sembrada">Semilla:</label>
+            <select id="Sembrada" name="Sembrada">
+                {% for semilla in semillas %}
+                <option value="{{ semilla }}">{{ semilla }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="Cosechada">Cosechada (hectáreas):</label>
+            <input type="text" id="Cosechada" name="Cosechada" placeholder="Ej. 0.056758"><br>
+            <label for="Siniestrada">Siniestrada (hectáreas):</label>
+            <input type="text" id="Siniestrada" name="Siniestrada" placeholder="Ej. 0.0"><br>
+            <label for="Cantidad">Cantidad (toneladas):</label>
+            <input type="text" id="Cantidad" name="Cantidad" placeholder="Ej. 0.0"><br>
+            <label for="Rendimiento">Rendimiento (toneladas/hectárea):</label>
+            <input type="text" id="Rendimiento" name="Rendimiento" placeholder="Ej. 0.152344"><br>
+            <label for="Volumenproduccion">Volumen de Producción (toneladas):</label>
+            <input type="text" id="Volumenproduccion" name="Volumenproduccion" placeholder="Ej. 0.011104"><br>
+            <input type="submit" value="Predecir">
+        </form>
+        {% if prediction_text %}
+        <h2>{{ prediction_text }}</h2>
+        <p>Este valor representa el precio promedio esperado por tonelada de producto basado en los datos ingresados. Utilice este valor como una estimación del precio que podría esperar obtener.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
