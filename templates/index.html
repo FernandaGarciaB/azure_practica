@@ -10,27 +10,27 @@
     <div class="container">
         <h1>Complete los detalles para la predicción</h1>
         <form action="/" method="post">
-            <label for="Sembrada">Semilla:</label>
-            <select id="Sembrada" name="Sembrada">
-                {% for semilla in semillas %}
-                <option value="{{ semilla }}">{{ semilla }}</option>
-                {% endfor %}
-            </select><br>
+            <label for="Sembrada">Sembrada (hectáreas):</label>
+            <input type="text" id="Sembrada" name="Sembrada" placeholder="Ej. 100" required><br>
             <label for="Cosechada">Cosechada (hectáreas):</label>
-            <input type="text" id="Cosechada" name="Cosechada" placeholder="Ej. 0.056758"><br>
-            <label for="Siniestrada">Siniestrada (hectáreas):</label>
-            <input type="text" id="Siniestrada" name="Siniestrada" placeholder="Ej. 0.0"><br>
-            <label for="Cantidad">Cantidad (toneladas):</label>
-            <input type="text" id="Cantidad" name="Cantidad" placeholder="Ej. 0.0"><br>
-            <label for="Rendimiento">Rendimiento (toneladas/hectárea):</label>
-            <input type="text" id="Rendimiento" name="Rendimiento" placeholder="Ej. 0.152344"><br>
+            <input type="text" id="Cosechada" name="Cosechada" placeholder="Ej. 90" required><br>
             <label for="Volumenproduccion">Volumen de Producción (toneladas):</label>
-            <input type="text" id="Volumenproduccion" name="Volumenproduccion" placeholder="Ej. 0.011104"><br>
+            <input type="text" id="Volumenproduccion" name="Volumenproduccion" placeholder="Ej. 6000" required><br>
+            <label for="Rendimiento">Rendimiento (toneladas/hectárea):</label>
+            <input type="text" id="Rendimiento" name="Rendimiento" placeholder="Ej. 1.2" required><br>
+            <label for="Valorproduccion">Valor de Producción (moneda):</label>
+            <input type="text" id="Valorproduccion" name="Valorproduccion" placeholder="Ej. 100000" required><br>
+            <label for="Nomcultivo">Tipo de Cultivo:</label>
+            <select id="Nomcultivo" name="Nomcultivo" required>
+                <option value="Frijol">Frijol</option>
+                <option value="Maíz grano">Maíz grano</option>
+                
+            </select><br>
             <input type="submit" value="Predecir">
         </form>
         {% if prediction_text %}
         <h2>{{ prediction_text }}</h2>
-        <p>Este valor representa el precio promedio esperado por tonelada de producto basado en los datos ingresados. Utilice este valor como una estimación del precio que podría esperar obtener.</p>
+        <p>Este valor representa el precio promedio esperado por kilo de producto basado en los datos ingresados. Utilice este valor como una estimación del precio que podría esperar obtener.</p>
         {% endif %}
     </div>
 </body>
