@@ -1,14 +1,17 @@
 from flask import Flask, request, render_template
 import pickle
 import numpy as np
+import pandas as pd
 
 app = Flask(__name__)
 
-# Cargar el modelo entrenado
-model = pickle.load(open('modelo_entrenado.pkl', 'rb'))
-
-# Definir las opciones del menú desplegable
-semillas = ['Maíz grano', 'Frijol']
+# Cargar el modelo entrenado y los escaladores
+with open('modelo_entrenado.pkl', 'rb') as f:
+    model = pickle.load(f)
+with open('feature_scaler.pkl', 'rb') as f:
+    feature_scaler = pickle.load(f)
+with open('price_scaler.pkl', 'rb') as f:
+    price_scaler = pickle.load(f)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -16,30 +19,37 @@ def home():
     if request.method == 'POST':
         try:
             # Recupera los datos del formulario
-            sembrada = request.form['Sembrada']
-            cosechada = float(request.form['Cosechada'])
-            siniestrada = float(request.form['Siniestrada'])
-            cantidad = float(request.form['Cantidad'])
-            rendimiento = float(request.form['Rendimiento'])
-            volumenproduccion = float(request.form['Volumenproduccion'])
+            sembrada = float(request.form.get('Sembrada'))
+            cosechada = float(request.form.get('Cosechada'))
+            volumenproduccion = float(request.form.get('Volumenproduccion'))
+            rendimiento = float(request.form.get('Rendimiento'))
+            valorproduccion = float(request.form.get('Valorproduccion'))
+            tipo_cultivo = request.form.get('Nomcultivo')
 
-            # Codificar las semillas para el modelo
-            if sembrada == 'Maíz grano':
-                sembrada_codificada = 0
-            elif sembrada == 'Frijol':
-                sembrada_codificada = 1
-            else:
-                raise ValueError("Semilla no válida")
+            # Codificación del tipo de cultivo
+            cultivo_frijol = 1 if tipo_cultivo == 'Frijol' else 0
+            cultivo_maiz = 1 if tipo_cultivo == 'Maíz grano' else 0
 
-            # Prepara los datos para el modelo
-            features = np.array([[sembrada_codificada, cosechada, siniestrada, volumenproduccion, rendimiento, cantidad]])
-            prediction = model.predict(features)
+            # Crear el arreglo de características
+            features = np.array([[sembrada, cosechada, volumenproduccion, rendimiento, valorproduccion, cultivo_frijol, cultivo_maiz]])
+
+            # Escalar las características
+            features_scaled = feature_scaler.transform(features)
+
+            # Realizar la predicción
+            prediction_scaled = model.predict(features_scaled)
+
+            # Desescalar la predicción
+            prediction = price_scaler.inverse_transform(prediction_scaled.reshape(-1, 1))
+
+            # Redondear el resultado a dos decimales
+            prediction_final = round(prediction[0][0], 2)
 
             # Devuelve el resultado de la predicción
-            prediction_text = f'Resultado de la predicción (Precio promedio por tonelada): {prediction[0]}'
+            prediction_text = f'Resultado de la predicción (Precio promedio por kilo): {prediction_final}'
         except Exception as e:
             prediction_text = f"Error: {str(e)}"
-    return render_template('index.html', semillas=semillas, prediction_text=prediction_text)
+    return render_template('index.html', prediction_text=prediction_text)
 
 if __name__ == "__main__":
     app.run(debug=True)
